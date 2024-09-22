@@ -1,2 +1,11 @@
 #!/usr/bin/env ruby
 
+require_relative '../lib/simulator'
+require_relative '../lib/table'
+require_relative '../lib/robot'
+
+table = Table.new(width: 5, height: 5)
+robot = Robot.new()
+simulator = Simulator.new(table: table, robot: robot)
+simulator.run
+
