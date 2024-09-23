@@ -14,6 +14,31 @@ class Simulator
     end
   end
 
+  def move_robot
+    return unless placed?
+
+    new_x, new_y = next_position
+
+    if table.valid_position?(new_x, new_y)
+      robot.move
+    else
+      puts "Move ignored to prevent falling off the table"
+    end
+  end
+
+  def next_position
+    case robot.facing
+    when 'NORTH'
+      [robot.x_coordinate, robot.y_coordinate + 1]
+    when 'EAST'
+      [robot.x_coordinate + 1, robot.y_coordinate]
+    when 'SOUTH'
+      [robot.x_coordinate, robot.y_coordinate - 1]
+    when 'WEST'
+      [robot.x_coordinate - 1, robot.y_coordinate]
+    end
+  end
+
   def report
     return unless placed?
 
