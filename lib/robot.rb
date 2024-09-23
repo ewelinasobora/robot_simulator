@@ -30,6 +30,17 @@ class Robot
     end
   end
 
+  def rotate(direction)
+    return unless %w(LEFT RIGHT).include?(direction)
+
+    current_index = DIRECTIONS.index(@facing)
+    if direction == 'LEFT'
+      @facing = DIRECTIONS[(current_index - 1) % DIRECTIONS.size]
+    elsif direction == 'RIGHT'
+      @facing = DIRECTIONS[(current_index + 1) % DIRECTIONS.size]
+    end
+  end
+
   private
   def valid_position?(x, y)
     x >= 0 && y >= 0
