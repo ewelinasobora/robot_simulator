@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class Robot
-  DIRECTIONS = %w(NORTH EAST SOUTH WEST)
+  DIRECTIONS = %w[NORTH EAST SOUTH WEST].freeze
 
   attr_accessor :x_coordinate, :y_coordinate, :facing
 
@@ -31,7 +33,7 @@ class Robot
   end
 
   def rotate(direction)
-    return unless %w(LEFT RIGHT).include?(direction)
+    return unless %w[LEFT RIGHT].include?(direction)
 
     current_index = DIRECTIONS.index(@facing)
     if direction == 'LEFT'
@@ -42,6 +44,7 @@ class Robot
   end
 
   private
+
   def valid_position?(x, y)
     x >= 0 && y >= 0
   end

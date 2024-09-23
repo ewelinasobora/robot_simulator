@@ -1,33 +1,36 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require_relative '../lib/simulator'
 require_relative '../lib/table'
 require_relative '../lib/robot'
 
 table = Table.new(width: 5, height: 5)
-robot = Robot.new()
-simulator = Simulator.new(table: table, robot: robot)
+robot = Robot.new
+simulator = Simulator.new(table:, robot:)
 
-puts "Enter a command (PLACE X,Y, (NORTH EAST SOUTH WEST) and then | MOVE | LEFT | RIGHT | REPORT | EXIT):"
+puts 'Enter a command (PLACE X,Y, (NORTH EAST SOUTH WEST) and then | MOVE | LEFT | RIGHT | REPORT | EXIT):'
 
 loop do
   input = gets.chomp.upcase
 
   case input
   when /^PLACE\s+(\d+),(\d+),(NORTH|SOUTH|EAST|WEST)$/
-    x, y, direction = $1.to_i, $2.to_i, $3
+    x = Regexp.last_match(1).to_i
+    y = Regexp.last_match(2).to_i
+    direction = Regexp.last_match(3)
     simulator.place_robot(x, y, direction)
-  when "MOVE"
+  when 'MOVE'
     simulator.move_robot
-  when "LEFT"
+  when 'LEFT'
     simulator.rotate_robot('LEFT')
-  when "RIGHT"
+  when 'RIGHT'
     simulator.rotate_robot('RIGHT')
-  when "REPORT"
+  when 'REPORT'
     puts simulator.report
-  when "EXIT"
+  when 'EXIT'
     break
   else
-    puts "Invalid command! You need to start with PLACE X,Y, robot facing NORTH/EAST/SOUTH/WEST and then use MOVE, LEFT, RIGHT, REPORT or EXIT."
+    puts 'Invalid command! You need to start with PLACE X,Y, robot facing NORTH/EAST/SOUTH/WEST and then use MOVE, LEFT, RIGHT, REPORT or EXIT.'
   end
 end

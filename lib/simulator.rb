@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Simulator
   attr_reader :table, :robot
 
@@ -7,11 +9,9 @@ class Simulator
   end
 
   def place_robot(x, y, direction)
-    if @table.valid_position?(x, y)
-      robot.place(x, y, direction)
-    else
-      raise "Invalid position: (#{x}, #{y}) is outside the table bounds."
-    end
+    raise "Invalid position: (#{x}, #{y}) is outside the table bounds." unless @table.valid_position?(x, y)
+
+    robot.place(x, y, direction)
   end
 
   def move_robot
@@ -22,7 +22,7 @@ class Simulator
     if table.valid_position?(new_x, new_y)
       robot.move
     else
-      puts "Move ignored to prevent falling off the table"
+      puts 'Move ignored to prevent falling off the table'
     end
   end
 
