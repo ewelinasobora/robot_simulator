@@ -5,32 +5,62 @@ require_relative '../lib/simulator'
 require_relative '../lib/table'
 require_relative '../lib/robot'
 
-table = Table.new(width: 5, height: 5)
-robot = Robot.new
-simulator = Simulator.new(table:, robot:)
+class RobotSimulator
+  COMMANDS = {
+    'PLACE' => /^PLACE\s+(\d+)\s*,\s*(\d+)\s*,\s*(NORTH|SOUTH|EAST|WEST)$/,
+    'MOVE' => 'MOVE',
+    'LEFT' => 'LEFT',
+    'RIGHT' => 'RIGHT',
+    'REPORT' => 'REPORT',
+    'EXIT' => 'EXIT'
+  }.freeze
 
-puts 'Enter a command (PLACE X,Y, (NORTH EAST SOUTH WEST) and then | MOVE | LEFT | RIGHT | REPORT | EXIT):'
+  def initialize
+    @table = Table.new(width: 5, height: 5)
+    @robot = Robot.new
+    @simulator = Simulator.new(table: @table, robot: @robot)
+  end
 
-loop do
-  input = gets.chomp.upcase
+  def start
+    print_instructions
 
-  case input
-  when /^PLACE\s+(\d+),(\d+),(NORTH|SOUTH|EAST|WEST)$/
-    x = Regexp.last_match(1).to_i
-    y = Regexp.last_match(2).to_i
-    direction = Regexp.last_match(3)
-    simulator.place_robot(x, y, direction)
-  when 'MOVE'
-    simulator.move_robot
-  when 'LEFT'
-    simulator.rotate_robot('LEFT')
-  when 'RIGHT'
-    simulator.rotate_robot('RIGHT')
-  when 'REPORT'
-    puts simulator.report
-  when 'EXIT'
-    break
-  else
-    puts 'Invalid command! You need to start with PLACE X,Y, robot facing NORTH/EAST/SOUTH/WEST and then use MOVE, LEFT, RIGHT, REPORT or EXIT.'
+    loop do
+      input = gets.chomp.upcase
+      process_command(input)
+    end
+  end
+
+  private
+
+  def print_instructions
+    puts 'PLACE X,Y,F - to place the robot on the table at position X,Y facing direction F (NORTH, EAST, SOUTH, or WEST). Commands are case-insensitive.'
+    puts 'MOVE - to move the robot one step forward in the direction it is currently facing.'
+    puts 'LEFT - to rotate the robot 90 degrees to the left.'
+    puts 'RIGHT - to rotate the robot 90 degrees to the right.'
+    puts 'REPORT - to display the current position and direction of the robot.'
+    puts 'EXIT - to exit the simulator.'
+  end
+
+  def process_command(input)
+    case input
+    when COMMANDS['PLACE']
+      x, y, direction = Regexp.last_match.captures
+      @simulator.place_robot(x.to_i, y.to_i, direction)
+    when COMMANDS['MOVE']
+      @simulator.move_robot
+    when COMMANDS['LEFT']
+      @simulator.rotate_robot('LEFT')
+    when COMMANDS['RIGHT']
+      @simulator.rotate_robot('RIGHT')
+    when COMMANDS['REPORT']
+      puts @simulator.report
+    when COMMANDS['EXIT']
+      exit
+    else
+      puts 'Invalid command! Please use one of the following commands:'
+      print_instructions
+    end
   end
 end
+
+RobotSimulator.new.start

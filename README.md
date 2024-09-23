@@ -57,5 +57,5 @@ To exit the app, type `exit` and press enter.
 To run the tests, run the following command:
 
 ```
-rspec
+bundle exec rspec
 ```

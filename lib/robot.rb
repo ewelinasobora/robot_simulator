@@ -11,12 +11,12 @@ class Robot
     @facing = facing
   end
 
-  def place(x, y, f)
-    return unless valid_position?(x, y) && DIRECTIONS.include?(f)
+  def place(x_position, y_position, facing)
+    return unless valid_position?(x_position, y_position) && DIRECTIONS.include?(facing)
 
-    @x_coordinate = x
-    @y_coordinate = y
-    @facing = f
+    @x_coordinate = x_position
+    @y_coordinate = y_position
+    @facing = facing
   end
 
   def move
@@ -45,7 +45,7 @@ class Robot
 
   private
 
-  def valid_position?(x, y)
-    x >= 0 && y >= 0
+  def valid_position?(x_position, y_position)
+    x_position >= 0 && y_position >= 0
   end
 end
