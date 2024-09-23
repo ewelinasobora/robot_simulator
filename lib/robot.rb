@@ -18,7 +18,6 @@ class Robot
   end
 
   private
-
   def valid_position?(x, y)
     x >= 0 && y >= 0
   end
