@@ -39,4 +39,29 @@ RSpec.describe Simulator do
       expect(subject.report).to eq('0,0,SOUTH')
     end
   end
+
+  describe '#rotate_robot' do
+    it 'rotates robot to the left' do
+      subject.place_robot(0,0,'NORTH')
+      subject.rotate_robot('LEFT')
+      expect(subject.report).to eq('0,0,WEST')
+    end
+
+    it 'rotates robot to the right' do
+      subject.place_robot(0,0,'NORTH')
+      subject.rotate_robot('RIGHT')
+      expect(subject.report).to eq('0,0,EAST')
+    end
+  end
+
+  describe 'complex movements' do
+    it 'executes a sequence of movements and rotations' do
+      subject.place_robot(1,2,'EAST')
+      subject.move_robot
+      subject.move_robot
+      subject.rotate_robot('LEFT')
+      subject.move_robot
+      expect(subject.report).to eq('3,3,NORTH')
+    end
+  end
 end

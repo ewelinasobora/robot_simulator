@@ -26,6 +26,12 @@ class Simulator
     end
   end
 
+  def rotate_robot(direction)
+    return unless placed?
+
+    robot.rotate(direction)
+  end
+
   def next_position
     case robot.facing
     when 'NORTH'
