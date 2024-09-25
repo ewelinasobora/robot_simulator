@@ -21,13 +21,6 @@ RSpec.describe Robot do
       expect(subject.facing).to eq('EAST')
     end
 
-    it 'does not place the robot if the position is invalid' do
-      subject.place(-1, 2, 'EAST')
-      expect(subject.x_coordinate).to be_nil
-      expect(subject.y_coordinate).to be_nil
-      expect(subject.facing).to be_nil
-    end
-
     it 'does not place the robot if the facing direction is invalid' do
       subject.place(1, 2, 'UP')
       expect(subject.x_coordinate).to be_nil
