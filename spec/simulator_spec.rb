@@ -3,6 +3,7 @@
 require_relative '../lib/robot'
 require_relative '../lib/table'
 require_relative '../lib/simulator'
+require_relative '../errors/error_messages'
 
 RSpec.describe Simulator do
   let(:table) { Table.new(width: 5, height: 5) }
@@ -21,7 +22,7 @@ RSpec.describe Simulator do
     it 'raises error for invalid placement' do
       expect do
         subject.place_robot(6, 6, 'NORTH')
-      end.to raise_error('Invalid position: (6, 6) is outside the table bounds.')
+      end.to raise_error(Errors::InvalidPositionError, 'Invalid position: (6, 6) is outside the table bounds.')
     end
   end
 
@@ -32,14 +33,13 @@ RSpec.describe Simulator do
       expect(subject.report).to eq('0,1,NORTH')
     end
 
-    it 'does not move robot if not placed' do
-      subject.move_robot
-      expect(subject.report).to be_nil
+    it 'raises error if robot is not placed' do
+      expect { subject.move_robot }.to raise_error(Errors::RobotNotPlacedError, 'Robot is not placed on the table.')
     end
 
-    it 'does not move robot if it would fall off the table' do
+    it 'raises error if robot would fall off the table' do
       subject.place_robot(0, 0, 'SOUTH')
-      subject.move_robot
+      expect { subject.move_robot }.to raise_error(Errors::MoveIgnoredError, 'Move ignored to prevent falling off the table.')
       expect(subject.report).to eq('0,0,SOUTH')
     end
   end

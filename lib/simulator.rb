@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../errors/error_messages'
+
 class Simulator
   attr_reader :table, :robot
 
@@ -9,31 +11,33 @@ class Simulator
   end
 
   def place_robot(x_position, y_position, direction)
-    raise "Invalid position: (#{x_position}, #{y_position}) is outside the table bounds." unless table.position_within_bounds?(x_position, y_position)
+    unless table.position_within_bounds?(x_position, y_position)
+      raise Errors::InvalidPositionError.new(x_position, y_position)
+    end
+
+    raise Errors::InvalidDirectionError, direction unless Robot::DIRECTIONS.include?(direction)
 
     robot.place(x_position, y_position, direction)
   end
 
   def move_robot
-    return unless placed?
+    raise Errors::RobotNotPlacedError unless placed?
 
     new_x, new_y = next_position
 
-    if table.position_within_bounds?(new_x, new_y)
-      robot.move
-    else
-      puts 'Move ignored to prevent falling off the table'
-    end
+    raise Errors::MoveIgnoredError unless table.position_within_bounds?(new_x, new_y)
+
+    robot.move
   end
 
   def rotate_robot(direction)
-    return unless placed?
+    raise Errors::RobotNotPlacedError unless placed?
 
     robot.rotate(direction)
   end
 
   def report
-    return unless placed?
+    raise Errors::RobotNotPlacedError unless placed?
 
     "#{robot.x_coordinate},#{robot.y_coordinate},#{robot.facing}"
   end
