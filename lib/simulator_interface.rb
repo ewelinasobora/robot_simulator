@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../errors/error_messages' # Ensure this line is added to include the Errors module
+require_relative '../errors/error_messages'
+require_relative '../errors/error_handler'
+
 class SimulatorInterface
+  include ErrorHandler
+
   COMMANDS = {
+    # regex to match the PLACE command and capture the x, y, and direction values
     'PLACE' => /^PLACE\s+(\d+)\s*,\s*(\d+)\s*,\s*(NORTH|SOUTH|EAST|WEST)$/,
     'MOVE' => 'MOVE',
     'LEFT' => 'LEFT',
@@ -39,25 +44,15 @@ class SimulatorInterface
     case input
     when COMMANDS['PLACE']
       x, y, direction = Regexp.last_match.captures
-      begin
-        @simulator.place_robot(x.to_i, y.to_i, direction)
-      rescue Errors::InvalidPositionError => e
-        puts "Error: #{e.message}"
-      rescue Errors::InvalidDirectionError => e
-        puts "Error: #{e.message}"
-      end
+      handle_errors { @simulator.place_robot(x.to_i, y.to_i, direction) }
     when COMMANDS['MOVE']
-      begin
-        @simulator.move_robot
-      rescue Errors::MoveIgnoredError => e
-        puts "Error: #{e.message}"
-      end
+      handle_errors { @simulator.move_robot }
     when COMMANDS['LEFT']
-      @simulator.rotate_robot('LEFT')
+      handle_errors { @simulator.rotate_robot('LEFT') }
     when COMMANDS['RIGHT']
-      @simulator.rotate_robot('RIGHT')
+      handle_errors { @simulator.rotate_robot('RIGHT') }
     when COMMANDS['REPORT']
-      puts @simulator.report
+      handle_errors { puts @simulator.report }
     when COMMANDS['EXIT']
       exit
     else

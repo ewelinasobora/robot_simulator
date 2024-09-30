@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../errors/error_messages'
+require_relative '../errors/error_handler'
 
 class Simulator
+  include ErrorHandler
+
   attr_reader :table, :robot
 
   def initialize(table:, robot:)
@@ -11,35 +14,43 @@ class Simulator
   end
 
   def place_robot(x_position, y_position, direction)
-    unless table.position_within_bounds?(x_position, y_position)
-      raise Errors::InvalidPositionError.new(x_position, y_position)
+    handle_errors do
+      unless table.position_within_bounds?(x_position, y_position)
+        raise Errors::InvalidPositionError.new(x_position, y_position)
+      end
+
+      raise Errors::InvalidDirectionError, direction unless Robot::DIRECTIONS.include?(direction)
+
+      robot.place(x_position, y_position, direction)
     end
-
-    raise Errors::InvalidDirectionError, direction unless Robot::DIRECTIONS.include?(direction)
-
-    robot.place(x_position, y_position, direction)
   end
 
   def move_robot
-    raise Errors::RobotNotPlacedError unless placed?
+    handle_errors do
+      raise Errors::RobotNotPlacedError unless placed?
 
-    new_x, new_y = next_position
+      new_x, new_y = next_position
 
-    raise Errors::MoveIgnoredError unless table.position_within_bounds?(new_x, new_y)
+      raise Errors::MoveIgnoredError unless table.position_within_bounds?(new_x, new_y)
 
-    robot.move
+      robot.move
+    end
   end
 
   def rotate_robot(direction)
-    raise Errors::RobotNotPlacedError unless placed?
+    handle_errors do
+      raise Errors::RobotNotPlacedError unless placed?
 
-    robot.rotate(direction)
+      robot.rotate(direction)
+    end
   end
 
   def report
-    raise Errors::RobotNotPlacedError unless placed?
+    handle_errors do
+      raise Errors::RobotNotPlacedError unless placed?
 
-    "#{robot.x_coordinate},#{robot.y_coordinate},#{robot.facing}"
+      "#{robot.x_coordinate},#{robot.y_coordinate},#{robot.facing}"
+    end
   end
 
   private
