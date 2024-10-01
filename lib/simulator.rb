@@ -24,6 +24,8 @@ class Simulator
 
       movable_item.place(x_position, y_position, direction)
     end
+
+    robot.move
   end
 
   def move_movable_item

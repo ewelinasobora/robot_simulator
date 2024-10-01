@@ -14,11 +14,12 @@ class MovableItem
     @steps = steps
   end
 
-  def place(x_position, y_position, facing)
+
+  def place(x_coordnate, y_coordnate, facing)
     return unless DIRECTIONS.include?(facing)
 
-    @x_coordinate = x_position
-    @y_coordinate = y_position
+    @x_coordinate = x_coordnate
+    @y_coordinate = y_coordnate
     @facing = facing
   end
 

@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/table'
+
 require_relative '../lib/movable_item/robot'
 require_relative '../lib/movable_item/car'
 require_relative '../lib/movable_item/item'
