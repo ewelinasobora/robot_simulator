@@ -2,11 +2,16 @@
 # frozen_string_literal: true
 
 require_relative '../lib/table'
-require_relative '../lib/robot'
+require_relative '../lib/movable_item/robot'
+require_relative '../lib/movable_item/car'
+require_relative '../lib/movable_item/item'
 require_relative '../lib/simulator'
 require_relative '../lib/simulator_interface'
 
 table = Table.new(width: 5, height: 5)
 robot = Robot.new
-simulator = Simulator.new(table:, robot:)
-SimulatorInterface.new(simulator).start
+car = Car.new
+item = Item.new
+simulator_1= Simulator.new(table:, movable_item: robot)
+simulator_2= Simulator.new(table:, movable_item: car)
+SimulatorInterface.new(simulator_1).start

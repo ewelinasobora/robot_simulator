@@ -27,4 +27,10 @@ module Errors
       super('Move ignored to prevent falling off the table.')
     end
   end
+
+  class NotImplementedError < RobotSimulatorError
+    def initialize
+      super('Method not implemented.')
+    end
+  end
 end

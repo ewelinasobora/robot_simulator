@@ -3,72 +3,81 @@
 require_relative '../errors/error_messages'
 require_relative '../errors/error_handler'
 
+# Simulator class is responsible for controlling the movements of a movable item on a table.
 class Simulator
   include ErrorHandler
 
-  attr_reader :table, :robot
+  attr_reader :table, :movable_item
 
-  def initialize(table:, robot:)
+  def initialize(table:, movable_item:)
     @table = table
-    @robot = robot
+    @movable_item = movable_item
   end
 
-  def place_robot(x_position, y_position, direction)
+  def place_movable_item(x_position, y_position, direction)
     handle_errors do
       unless table.position_within_bounds?(x_position, y_position)
         raise Errors::InvalidPositionError.new(x_position, y_position)
       end
 
-      raise Errors::InvalidDirectionError, direction unless Robot::DIRECTIONS.include?(direction)
+      raise Errors::InvalidDirectionError, direction unless movable_item.class::DIRECTIONS.include?(direction)
 
-      robot.place(x_position, y_position, direction)
+      movable_item.place(x_position, y_position, direction)
     end
   end
 
-  def move_robot
+  def move_movable_item
     handle_errors do
-      raise Errors::RobotNotPlacedError unless placed?
+      raise Errors.movable_itemNotPlacedError unless placed?
 
       new_x, new_y = next_position
 
       raise Errors::MoveIgnoredError unless table.position_within_bounds?(new_x, new_y)
 
-      robot.move
+      movable_item.move
     end
   end
 
-  def rotate_robot(direction)
+  def rotate_movable_item(direction)
     handle_errors do
-      raise Errors::RobotNotPlacedError unless placed?
+      raise Errors.movable_itemNotPlacedError unless placed?
 
-      robot.rotate(direction)
+      movable_item.rotate(direction)
     end
   end
 
   def report
     handle_errors do
-      raise Errors::RobotNotPlacedError unless placed?
+      raise Errors.movable_itemNotPlacedError unless placed?
 
-      "#{robot.x_coordinate},#{robot.y_coordinate},#{robot.facing}"
+      "#{movable_item.x_coordinate},#{movable_item.y_coordinate},#{movable_item.facing}"
     end
   end
 
   private
 
   def next_position
-    case robot.facing
+    x = movable_item.x_coordinate
+    y = movable_item.y_coordinate
+    x, y = adjust_position(x, y, movable_item.facing)
+    [x, y]
+  end
+
+  def adjust_position(x_coord, y_coord, facing)
+    case facing
     when 'NORTH'
-      [robot.x_coordinate, robot.y_coordinate + 1]
+      y_coord += 1
     when 'EAST'
-      [robot.x_coordinate + 1, robot.y_coordinate]
+      x_coord += 1
     when 'SOUTH'
-      [robot.x_coordinate, robot.y_coordinate - 1]
+      y_coord -= 1
     when 'WEST'
-      [robot.x_coordinate - 1, robot.y_coordinate]
+      x_coord -= 1
     end
+    [x_coord, y_coord]
   end
 
   def placed?
-    robot.x_coordinate && robot.y_coordinate && robot.facing
+    movable_item.x_coordinate && movable_item.y_coordinate && movable_item.facing
   end
 end
