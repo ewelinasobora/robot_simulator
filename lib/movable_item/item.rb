@@ -12,6 +12,4 @@ class Item < MovableItem
   def move
     super(steps)
   end
-
-  
 end
